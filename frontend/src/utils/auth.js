@@ -55,7 +55,7 @@ export const logout = () => {
 }
 
 
-export const setUser = async (access_token, refresh_token) => {
+export const setUser = async () => {
     const accessToken = Cookies.get('access_token');
     const refreshToken = Cookies.get('refresh_token');
 
@@ -91,10 +91,16 @@ export const setAuthUser = (access_token, refresh_token) => {
 }
 
 export const isAccessTokenExpired = (accessToken) => {
-    //
+    try {
+        const decodedToken = jwt_decode(accessToken);
+        return decodedToken.exp < Date.now() / 100; 
+    } catch (error) {
+        console.log(error);
+        return true;
+    }
 }
 
-export const getRefreshToken = async (refreshToken) => {
+export const getRefreshToken = async () => {
     const refresh_token = Cookies.get('refresh_token');
     const response = await axios.post('user/token/refresh/', { 
         refresh: refresh_token 
