@@ -44,9 +44,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         
         email_user = user.email.split("@")[0] # Split email to get username from username@email.com
-        user.set_password(validate_password['password'])
-
-        user.set_password(validate_password['password'])
+        user.username = email_user
+        user.set_password(validated_data['password'])
         user.save()
         return user
 
