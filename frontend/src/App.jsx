@@ -1,4 +1,4 @@
-//import { useState } from 'react'
+
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
 import Login from './views/auth/login'
@@ -7,7 +7,6 @@ import Dashboard from './views/auth/dashboard'
 import Logout from './views/auth/logout'
 
 function App() {
-  //const [count, setCount] = useState(0)
 
   return (
     <BrowserRouter>
