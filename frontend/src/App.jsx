@@ -1,10 +1,11 @@
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
-import Login from './views/auth/login'
-import Register from './views/auth/register'
-import Dashboard from './views/auth/dashboard'
-import Logout from './views/auth/logout'
+import Login from './views/auth/Login'
+import Register from './views/auth/Register'
+import Dashboard from './views/auth/Dashboard'
+import Logout from './views/auth/Logout'
+import ForgotPassword from './views/auth/ForgotPassword'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Dashboard />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/forgot-password" element={<ForgotPassword/>} />
       </Routes>
     </BrowserRouter>
   )

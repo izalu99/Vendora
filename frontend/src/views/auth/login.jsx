@@ -48,7 +48,8 @@ const Login = () => {
                     <input 
                     type="email" 
                     name="email" 
-                    id="email" 
+                    id="email"
+                    autoComplete='off'
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)} />
                 </div>
@@ -56,13 +57,14 @@ const Login = () => {
                     <label htmlFor="password">Password</label>
                     <input 
                     type="password" 
-                    name="email" 
+                    name="password" 
                     id="password" 
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <button type="submit" disabled={isLoading}>Login</button>
                 <Link to="/register">Register</Link>
+                <Link to="/forgot-password">Forgot Password</Link>
 
             </form>
         </div>

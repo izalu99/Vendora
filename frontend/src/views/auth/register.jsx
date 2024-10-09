@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { register } from '../../utils/auth';
 import { useNavigate} from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
     const [fullName, setFullName] = useState('')
@@ -41,12 +42,13 @@ const Register = () => {
       <h2>Register</h2>
       <form onSubmit = {handleSubmit}>
         <div>
-          <label htmlFor="full_name">Full Name</label>
+          <label htmlFor="fullName">Full Name</label>
           <input 
           type="text" 
           id="fullName" 
           name="fullName" 
           placeholder='Full Name'
+          autoComplete="given-name"
           onChange={(e) => setFullName(e.target.value)} />
         </div>
         <div>
@@ -56,10 +58,11 @@ const Register = () => {
           id="email" 
           name="email" 
           placeholder='example@email.com'
+          autoComplete="off"
           onChange={(e) => setEmail(e.target.value)}/>
         </div>
         <div>
-          <label htmlFor="email">Phone number</label>
+          <label htmlFor="phone">Phone number</label>
           <input 
           type="text" 
           id="phone" 
@@ -85,7 +88,7 @@ const Register = () => {
         </div>
         <button type="submit" disabled={isLoading}>Register</button>
       </form>
-
+      <Link to="/login">Login</Link>
     </div>
   )
 }
