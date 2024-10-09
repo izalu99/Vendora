@@ -1,22 +1,25 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom';
 import apiInstance  from '../../utils/axios';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('')
+    const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log('submitted')
+    const handleSubmit =  async() => {
+        if(!email){
+            alert('Please enter email')
+        }
         try{
-            if(!email){
-                alert('Please enter email')
-            }
-            apiInstance.get(`user/password-reset/${email}`).then((res) => {
-                console.log(res.data)
+            await apiInstance.get(`user/password-reset/${email}`)
+            .then((res) => {
+                alert('An email has been sent to you to reset and change your password.')
+                //console.log(res)
+                navigate('/create-new-password')
             })
         } catch (error){
-            alert('An error occurred connecting to the password reset endpoint.')
+            alert('Email not found. Please enter a valid email.')
             console.log(error)
         }
         
@@ -24,7 +27,7 @@ const ForgotPassword = () => {
     return (
         <div>
             <h1>Forgot Password</h1>
-            <form onSubmit={handleSubmit}>
+            <div>
                 <label htmlFor="email">Email</label>
                 <input 
                 type="email" 
@@ -33,8 +36,8 @@ const ForgotPassword = () => {
                 autoComplete='off'
                 value={email}
                 onChange={(e)=> setEmail(e.target.value)}/>
-                <button type="submit">Reset Password</button>
-            </form>
+                <button type="submit" onClick={handleSubmit}>Reset Password</button>
+            </div>
             <Link to="/login">Login</Link>
         </div>
   )
