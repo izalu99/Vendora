@@ -1,7 +1,10 @@
 # Vendora
 A mock e-commerce site built for hands-on learning with Django and React. The project aims to provide a fully functional e-commerce experience, from browsing products to completing purchases, while exploring different technologies and development practices.
 
-**Note:** The products shown on this site are not for sale.
+**Note:** 
+- *The products shown on this site are not for sale.*
+- *I will be using this youtube video tutorial for guidance: [video](https://www.youtube.com/watch?v=aPdgotL6Wuc&list=PL_KegS2ON4s6DqLCavZ3b8zUKP8j9T-zM&index=5)*
+
 
 ## Table of Contents
 - [Tech Stack](#tech-stack)
