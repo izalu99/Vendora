@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom';
 import apiInstance  from '../../utils/axios';
-import { useNavigate } from 'react-router-dom';
+
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('')
-    const navigate = useNavigate()
+    
 
     const handleSubmit =  async() => {
         if(!email){
@@ -16,7 +16,7 @@ const ForgotPassword = () => {
             .then((res) => {
                 alert('An email has been sent to you to reset and change your password.')
                 //console.log(res)
-                navigate('/create-new-password')
+                
             })
         } catch (error){
             alert('Email not found. Please enter a valid email.')
