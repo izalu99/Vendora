@@ -13,8 +13,11 @@ const Dashboard = () => {
             </div>
         :<div>
             <h1>Home Page</h1>
-            <Link to={`/login`}>Login</Link>
-            <Link to={`/register`}>Register</Link>
+            <div className='d-flex'>
+            {/*<Link className='btn btn-primary' to={`/login`}>Login</Link>
+            <Link className='btn btn-primary ms-4' to={`/register`}>Register</Link>
+            */}
+            </div>
         </div>
       
       }
