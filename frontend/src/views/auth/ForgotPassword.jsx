@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import apiInstance  from '../../utils/axios';
 
 
@@ -7,7 +7,7 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState('')
     
 
-    const handleSubmit =  async() => {
+    const handleOnClick =  async() => {
         if(!email){
             alert('Please enter email')
         }
@@ -25,21 +25,56 @@ const ForgotPassword = () => {
         
     }
     return (
-        <div>
-            <h1>Forgot Password</h1>
-            <div>
-                <label htmlFor="email">Email</label>
-                <input 
-                type="email" 
-                id="email" 
-                placeholder="Enter email"
-                autoComplete='off'
-                value={email}
-                onChange={(e)=> setEmail(e.target.value)}/>
-                <button type="submit" onClick={handleSubmit}>Reset Password</button>
-            </div>
-            <Link to="/login">Login</Link>
+        <section>
+    <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+        <div className="container">
+            {/* Section: Login form */}
+            <section className="">
+                <div className="row d-flex justify-content-center">
+                    <div className="col-xl-5 col-md-8">
+                        <div className="card rounded-5">
+                            <div className="card-body p-4">
+                                <h3 className="text-center">Forgot Password</h3>
+                                <br />
+
+                                <div className="tab-content">
+                                    <div
+                                        className="tab-pane fade show active"
+                                        id="pills-login"
+                                        role="tabpanel"
+                                        aria-labelledby="tab-login"
+                                    >
+                                        <div>
+                                            {/* Email input */}
+                                            <div className="form-outline mb-4">
+                                                <label className="form-label" htmlFor="Full Name">
+                                                    Email Address
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="email"
+                                                    name="email"
+                                                    className="form-control"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="text-center">
+                                                <button className='btn btn-primary w-100' onClick={handleOnClick}>Reset Password</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+    </main>
+</section>
   )
 }
 

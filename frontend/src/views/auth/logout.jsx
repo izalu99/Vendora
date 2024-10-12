@@ -9,10 +9,16 @@ const Logout = () => {
     }, [])
   
     return (
-    <div>
-      <h1>Logout</h1>
-        <Link to={`/login`}>Login</Link>
-        <Link to={`/register`}>Register</Link>
+    <div className=''>
+      <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+        <container className="row d-flex justify-content-center text-center">
+          <h3>You have been logged out.</h3>
+          <div className='col d-flex justify-content-center'>
+            <Link to={`/login`} className='pe-3'>Login</Link>
+            <Link to={`/register`}>Register</Link>
+          </div>
+        </container>
+      </main>
     </div>
   )
 }
