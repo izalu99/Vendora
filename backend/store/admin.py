@@ -1,5 +1,7 @@
 from django.contrib import admin
-from store.models import Category, Product, Gallery, Specification, Size, Color
+#from vendor.models import Vendor
+#from userauths.models import User
+from store.models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title', 'active', 'slug']
@@ -27,7 +29,23 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ['price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
     list_filter = ['category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
     search_fields = ['title', 'category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
-    inlines = [GalleryInline, SpecificationInline, SizeInline, ColorInline] 
+    inlines = [GalleryInline, SpecificationInline, SizeInline, ColorInline]
+
+
+class CartOrderInline(admin.TabularInline):
+    model = CartOrderItem
+    extra = 0
+
+
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['cart_id', 'date', 'product','user','qty','price','size','color','country','total' ]
+
+class CartOrderAdmin(admin.ModelAdmin):
+    list_display = ['oid','date','buyer','full_name','total', 'order_status', 'payment_status']
+    inlines = [CartOrderInline]
+
+class CartOrderItemAdmin(admin.ModelAdmin):
+    list_display = ['oid','date','order', 'product', 'vendor', 'qty', 'price', 'sub_total', 'shipping_amount', 'total']
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -36,3 +54,6 @@ admin.site.register(Gallery)
 admin.site.register(Specification)
 admin.site.register(Size)
 admin.site.register(Color)
+admin.site.register(Cart, CartAdmin)
+admin.site.register(CartOrder, CartOrderAdmin)
+admin.site.register(CartOrderItem, CartOrderItemAdmin)
