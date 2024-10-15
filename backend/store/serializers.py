@@ -1,4 +1,4 @@
-from restframework import serializers
+from rest_framework import serializers
 
 from store.models import Category, Product, Gallery,Specification, Size, Color, Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon
 from vendor.models import Vendor
