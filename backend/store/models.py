@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
-from userauths.models import User
+
+from userauths.models import User, Profile
 from vendor.models import Vendor
 
 from shortuuid.django_fields import ShortUUIDField
@@ -56,11 +59,18 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if self.slug == '' or self.slug == None:
             self.slug = slugify(self.name) # making the name url friendly
-        
         super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.title)
+    
+    def product_rating(self):
+        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
+        return product_rating['avg_rating']
+    
+    def save(self, *args, **kwargs):
+        self.rating = self.product_rating()
+        super(Product, self).save(*args, **kwargs)
     
 
 class Gallery(models.Model):
@@ -199,3 +209,97 @@ class CartOrderItem(models.Model):
 
     def __str__(self):
         return str(self.oid)
+
+
+class ProductFaq(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    email = models.EmailField(null=True, blank=True)
+    question = models.CharField(max_length=1000)
+    answer = models.TextField(null=True, blank=True)
+    active = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.question)
+
+    class Meta:
+        verbose_name_plural = 'Product FAQs'
+
+
+class Review(models.Model):
+    RATING = (
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    review = models.TextField()
+    reply = models.TextField(null=True, blank=True)
+    rating = models.IntegerField(default=None, choices=RATING)
+    active = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.product.title)
+
+    class Meta:
+        verbose_name_plural = 'Reviews and Ratings'
+
+    def profile(self):
+        return Profile.objects.get(user=self.user)
+
+
+@receiver(post_save, sender=Review)
+def update_product_rating(sender, instance, **kwargs):
+    if instance.product:
+        instance.product.save()
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.product.title)
+
+    class Meta:
+        verbose_name_plural = 'Wishlist'
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    order = models.ForeignKey(CartOrder, on_delete=models.SET_NULL, null=True, blank=True)
+    order_item = models.ForeignKey(CartOrderItem, on_delete=models.SET_NULL, null=True, blank=True)
+    seen = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.order:
+            return self.order.oid
+        else:
+            return f"Notification - {self.pk}"
+
+    class Meta:
+        verbose_name_plural = 'Notifications'
+
+
+class Coupon(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    user_by = models.ManyToManyField(User, blank=True)
+    code = models.CharField(max_length=1000)
+    discount = models.DecimalField(max_digits=12, decimal_places=2, default=1.00)
+    date = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.code)
+
+
+

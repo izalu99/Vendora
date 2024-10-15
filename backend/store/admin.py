@@ -2,6 +2,8 @@ from django.contrib import admin
 #from vendor.models import Vendor
 #from userauths.models import User
 from store.models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
+from store.models import ProductFaq, Review, Wishlist, Notification, Coupon
+
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title', 'active', 'slug']
@@ -48,6 +50,21 @@ class CartOrderItemAdmin(admin.ModelAdmin):
     list_display = ['oid','date','order', 'product', 'vendor', 'qty', 'price', 'sub_total', 'shipping_amount', 'total']
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['product', 'user', 'rating', 'review', 'date']
+
+class ProductFaqAdmin(admin.ModelAdmin):
+    list_display = ['product', 'user', 'email', 'question', 'answer', 'date']
+
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ['product', 'user', 'date']
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'vendor', 'order', 'order_item', 'seen', 'date']
+
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ['code', 'discount', 'vendor', 'active', 'date']
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Gallery)
@@ -57,3 +74,9 @@ admin.site.register(Color)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartOrder, CartOrderAdmin)
 admin.site.register(CartOrderItem, CartOrderItemAdmin)
+
+admin.site.register(ProductFaq, ProductFaqAdmin)
+admin.site.register(Review, ReviewAdmin)
+admin.site.register(Wishlist, WishlistAdmin)
+admin.site.register(Notification, NotificationAdmin)
+admin.site.register(Coupon, CouponAdmin)
