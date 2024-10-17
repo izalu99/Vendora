@@ -50,7 +50,7 @@ class Product(models.Model):
 
     featured = models.BooleanField(default=False) #by default, the product is not featured until admin makes it featured
     views = models.PositiveIntegerField(default=0)
-    rating = models.PositiveIntegerField(default=0) # rating out of 5
+    rating = models.PositiveIntegerField(default=0, blank=True, null=True) # rating out of 5
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, related_name='vendor', null=True, blank=True)
     pid = ShortUUIDField(unique=True, length=10, alphabet='abcdefghi0123456789') # product id
     slug = models.SlugField(unique=True)
