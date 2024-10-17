@@ -50,7 +50,7 @@ class Product(models.Model):
 
     featured = models.BooleanField(default=False) #by default, the product is not featured until admin makes it featured
     views = models.PositiveIntegerField(default=0)
-    rating = models.PositiveIntegerField(default=0) # rating out of 5
+    rating = models.PositiveIntegerField(default=0, blank=True, null=True) # rating out of 5
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, related_name='vendor', null=True, blank=True)
     pid = ShortUUIDField(unique=True, length=10, alphabet='abcdefghi0123456789') # product id
     slug = models.SlugField(unique=True)
@@ -67,6 +67,21 @@ class Product(models.Model):
     def product_rating(self):
         product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
         return product_rating['avg_rating']
+    
+    def rating_count(self):
+        return Review.objects.filter(product=self).count()
+    
+    def gallery(self):
+        return Gallery.objects.filter(product=self)
+    
+    def specification(self):
+        return Specification.objects.filter(product=self)
+    
+    def size(self):
+        return Size.objects.filter(product=self)
+    
+    def color(self):
+        return Color.objects.filter(product=self)
     
     def save(self, *args, **kwargs):
         self.rating = self.product_rating()
