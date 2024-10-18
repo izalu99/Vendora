@@ -106,7 +106,7 @@ const Products = () => {
                                                 <div className="origin-top-right absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="dropdownMenuButton">
                                                         <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Size</b>: {chosenSizes[product.pid] || "None"}
+                                                            <b>Size</b>: {chosenSizes[product.pid] || ""}
                                                         </div>
                                                         <div className="px-4 py-2 flex flex-wrap">
                                                             {product.size?.map((size) => (
@@ -120,18 +120,18 @@ const Products = () => {
                                                             }
                                                         </div>
                                                         <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Color</b>: {chosenColors[product.pid] || "None"}
+                                                            <b>Color</b>: {chosenColors[product.pid] || ""}
                                                         </div>
                                                         <div className="px-4 py-2 flex flex-wrap">
                                                             {product.color?.map((color) => (
                                                                 <button 
                                                                 onClick={() => chooseColor(product.pid, color.name)} 
                                                                 key={`${color.id}-${color.name}`} 
-                                                                style={{backgroundColor: color.name}} 
+                                                                style={{backgroundColor: `${color.color_code}`}} 
                                                                 className="w-6 h-6 rounded-full mr-2 mb-2"
                                                                 ></button>
-                                                            ))
-                                                            }
+                                                                
+                                                            ))}
                                                         </div>
                                                         <div className="px-4 py-2 flex">
                                                             <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">
