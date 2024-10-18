@@ -5,11 +5,31 @@ import apiInstance from "../../utils/axios";
 const Products = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [IsVariationMenuOpen, setIsVariationMenuOpen] = useState(false);
+    const [OpenVariationMenus, setOpenVariationMenus] = useState({});
+    const [chosenColors, setChosenColors] = useState({});
+    const [chosenSizes, setChosenSizes] = useState({});
 
-    const toggleVariationMenu = () => {
-        setIsVariationMenuOpen(!IsVariationMenuOpen);
+
+    const toggleVariationMenu = (productId) => {
+        setOpenVariationMenus((prevVariationMenus) => ({
+            ...prevVariationMenus,
+            [productId]: !prevVariationMenus[productId],
+        }));
     };
+
+    const chooseColor = (productId, color) => {
+        setChosenColors((prevChosenColors) => ({
+            ...prevChosenColors,
+            [productId]: color,
+        }));
+    }
+
+    const chooseSize = (productId, size) => {
+        setChosenSizes((prevChosenSizes) => ({
+            ...prevChosenSizes,
+            [productId]: size,
+        }));
+    }
 
     useEffect(() => {
         apiInstance.get('products/')
@@ -67,14 +87,14 @@ const Products = () => {
                                             </Link>
                                             <p className="text-gray-600">{product.category?.title}</p>
                                             <h6 className="text-lg font-bold mb-3">${product.price}</h6>
-                                            <div className="relative inline-block text-left">
+                                            <div className="relative inline-block text-left space-x-2">
                                                 <button
                                                     className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
                                                     type="button"
                                                     id="dropdownMenuButton"
-                                                    aria-expanded="true"
+                                                    aria-expanded={OpenVariationMenus[product.pid] ? "true" : "false"}
                                                     aria-haspopup="true"
-                                                    onClick={toggleVariationMenu}
+                                                    onClick={() => toggleVariationMenu(product.pid)}
                                                 >
                                                     Variation
                                                     <svg className="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -82,24 +102,36 @@ const Products = () => {
                                                     </svg>
                                                 </button>
                                                 {/* Variation Menu */}
-                                                {IsVariationMenuOpen &&
-                                                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                {OpenVariationMenus[product.pid] && (
+                                                <div className="origin-top-right absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="dropdownMenuButton">
                                                         <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Size</b>: XL
+                                                            <b>Size</b>: {chosenSizes[product.pid] || "None"}
                                                         </div>
                                                         <div className="px-4 py-2 flex flex-wrap">
-                                                            <button className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">XXL</button>
-                                                            <button className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">XXL</button>
-                                                            <button className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">XXL</button>
+                                                            {product.size?.map((size) => (
+                                                                <button 
+                                                                onClick={()=> chooseSize(product.pid, size.name)} 
+                                                                key={`${size.id}-${size.name}`} 
+                                                                className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2"
+                                                                >{size.name}</button>
+                                                            ))
+
+                                                            }
                                                         </div>
                                                         <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Color</b>: Red
+                                                            <b>Color</b>: {chosenColors[product.pid] || "None"}
                                                         </div>
                                                         <div className="px-4 py-2 flex flex-wrap">
-                                                            <button className="w-6 h-6 rounded-full bg-red-500 mr-2 mb-2"></button>
-                                                            <button className="w-6 h-6 rounded-full bg-green-500 mr-2 mb-2"></button>
-                                                            <button className="w-6 h-6 rounded-full bg-yellow-500 mr-2 mb-2"></button>
+                                                            {product.color?.map((color) => (
+                                                                <button 
+                                                                onClick={() => chooseColor(product.pid, color.name)} 
+                                                                key={`${color.id}-${color.name}`} 
+                                                                style={{backgroundColor: color.name}} 
+                                                                className="w-6 h-6 rounded-full mr-2 mb-2"
+                                                                ></button>
+                                                            ))
+                                                            }
                                                         </div>
                                                         <div className="px-4 py-2 flex">
                                                             <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">
@@ -111,9 +143,9 @@ const Products = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                }
+                                                )}
                                             </div>
-                                            <button className="bg-red-500 text-white text-xs font-semibold py-1 px-2 rounded mt-2">
+                                            <button className="bg-red-500 ml-2 text-white text-xs font-semibold py-1 px-2 rounded mt-2">
                                                 <i className="fas fa-heart"></i>
                                             </button>
                                         </div>
