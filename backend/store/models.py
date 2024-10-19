@@ -315,6 +315,22 @@ class Coupon(models.Model):
 
     def __str__(self):
         return str(self.code)
+    
+
+class Tax(models.Model):
+    country = models.CharField(max_length=1000)
+    rate = models.DecimalField(max_digits=12, decimal_places=2, default=5.00, help_text="Numbers added here are in percentage, e.g.,5.00%")
+    active = models.BooleanField(default=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.country)
+    
+    class Meta:
+        verbose_name_plural = 'Tax Rates'
+        ordering = ['country']
+
+
 
 
 

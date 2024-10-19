@@ -2,7 +2,7 @@ from django.contrib import admin
 #from vendor.models import Vendor
 #from userauths.models import User
 from store.models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
-from store.models import ProductFaq, Review, Wishlist, Notification, Coupon
+from store.models import ProductFaq, Review, Wishlist, Notification, Coupon, Tax
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -80,3 +80,4 @@ admin.site.register(Review, ReviewAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(Tax)
