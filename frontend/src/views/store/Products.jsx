@@ -53,7 +53,7 @@ const Products = () => {
                 <div className="flex flex-col space-y-5">
                     {/* Section: Category */}
                     <section className="text-center">
-                        <div className="flex flex-row justify-center">
+                        <div className="flex flex-wrap justify-center">
                             <h4 className="text-center">Categories</h4>
                             {categories?.map((category) => (
                                 <div key={category.slug} className="mx-4">
