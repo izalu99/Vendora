@@ -34,6 +34,9 @@ A mock e-commerce site built for hands-on learning with Django and React. The pr
 - **Containerization:** Docker (TBD)
 - **Version Control:** Git, GitHub
 
+## Open APIs
+- [Open Street Map](https://www.openstreetmap.org/copyright)
+
 ## Project Goals
 - **Learn and apply** Django and React together to build a full-stack web application.
 - **Explore best practices** for developing, testing, and deploying an e-commerce app.
