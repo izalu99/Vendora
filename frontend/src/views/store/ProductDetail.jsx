@@ -1,0 +1,440 @@
+import {useState, useEffect} from 'react'
+import { useParams } from 'react-router-dom'
+
+import apiInstance from '../../utils/axios'
+
+const ProductDetail = () => {
+    const [product, setProduct] = useState({})
+    const [specifications, setSpecifications] = useState([])
+    const [sizes, setSizes] = useState([])
+    const [gallery, setGallery] = useState([])
+    const [colors, setColors] = useState([])
+    const param  = useParams().slug
+    console.log('param: ', param)
+
+    useEffect(() => {
+        apiInstance.get(`products/${param}`)
+        .then((res) => {
+            let response;
+            try{
+                response = res.data
+                console.log(response)
+                setProduct(response)
+            } catch (error){
+                console.log("Error: ", error)
+            }
+
+            if(product){
+                setSpecifications(response.specification)
+                setSizes(response.size)
+                setGallery(response.gallery)
+                setColors(response.color)
+            }
+        })
+    },[param])
+    console.log('product: ', product)
+    console.log('product.size: ', sizes)
+    console.log('product.specification: ', specifications)
+    console.log('product.gallery: ', gallery)
+    console.log('product.color: ', colors)
+
+  return (
+    <div>
+      <main className="mb-4 mt-4">
+            <div className="container mx-auto">
+                {/* Section: Product details */}
+                <section className="mb-9">
+                    <div className="flex flex-wrap -mx-4">
+                        <div className="w-full md:w-1/2 px-4 mb-4 md:mb-0">
+                            {/* Gallery */}
+                            <div className="">
+                                <div className="flex flex-wrap -mx-2">
+                                    <div className="w-full px-2">
+                                        <div className="">
+                                            <img
+                                                src={product.image}
+                                                style={{
+                                                    width: "100%",
+                                                    height: 500,
+                                                    objectFit: "cover",
+                                                    borderRadius: 10
+                                                }}
+                                                alt="Gallery image 1"
+                                                className="w-full rounded-lg"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-3">
+                                    <div className="p-3 flex flex-row">
+                                        {gallery?.map((image) => (
+                                            <img
+                                            key={image.gid}
+                                            src={image.image}
+                                            alt={`Gallery image ${image.gid}`}
+                                            className="mr-4 w-16 h-16 md:w-36 md:h-36 rounded-md"
+                                            />
+                                        ))}
+                                        
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            {/* Gallery */}
+                        </div>
+                        <div className="w-full md:w-1/2 px-4 mb-4 md:mb-0">
+                            {/* Details */}
+                            <div>
+                                <h1 className="fw-bold mb-3">{product.title}</h1>
+                                <div className="flex text-primary items-center">
+                                    <ul className="mb-3 d-flex p-0" style={{ listStyle: "none" }}>
+                                        <li>
+                                            <i className="fas fa-star fa-sm text-yellow-500" title="Bad" />
+                                            <i className="fas fa-star fa-sm text-yellow-500" title="Bad" />
+                                            <i className="fas fa-star fa-sm text-yellow-500" title="Bad" />
+                                            <i className="fas fa-star fa-sm text-yellow-500" title="Bad" />
+                                            <i className="fas fa-star fa-sm text-yellow-500" title="Bad" />
+                                        </li>
+
+                                        <li className="ml-2 text-sm">
+                                            <a href="" className="text-decoration-none">
+                                                <strong className="mr-2">4/5</strong>(2 reviews)
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <h5 className="mb-3">
+                                    <s className="text-gray-500 mr-2 text-sm">${product.old_price}</s>
+                                    <span className="">${product.price}</span>
+                                </h5>
+                                <p className="text-gray-600">
+                                    {product.description? 
+                                    product.description 
+                                    : `Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    Ratione accusantium harum repellendus illo mollitia similique
+                                    atque vitae repudiandae animi dolor? Rem eveniet saepe
+                                    deserunt aliquam. Enim incidunt quas voluptatibus perferendis.`}
+                                </p>
+                                <div className="overflow-x-auto">
+                                    <table className="table-auto w-full text-left">
+                                        <tbody>
+                                            <tr>
+                                                <th className="py-2 pr-4 w-1/4">
+                                                    <strong>Category</strong>
+                                                </th>
+                                                <td>{product.category?.title}</td>
+                                            </tr>
+                                            {specifications.map((spec) => (
+                                                <tr key={spec.id}>
+                                                    <th className="py-2 pr-4 w-1/4">
+                                                        {" "}
+                                                        <strong>{spec.title}</strong>
+                                                    </th>
+                                                    <td>{spec.content}</td>
+                                                </tr>
+                                            ))
+
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr className="my-5" />
+                                <form action="">
+                                    <div className="flex flex-col">
+                                        {/* Quantity */}
+                                        <div className="mb-4">
+                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Quantity</b></label>
+                                            <input
+                                                type="number"
+                                                id="typeNumber"
+                                                className="w-1/2 border border-gray-300 p-2 rounded-lg"
+                                                min={1}
+                                                value={1}
+                                            />
+                                        </div>
+
+                                        {/* Size */}
+                                        <div className="mb-4">
+                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Size:</b><span>{}</span></label>
+                                            <div className='flex'>
+                                                {sizes.map((size) => (
+                                                    <div key={size.id} className='block mr-2'>
+                                                        <button className='btn btn-secondary'>{size.name}</button>
+                                                    </div>
+                                                ))
+                                                }
+                                            </div>
+                                        </div>
+
+                                        {/* Colors */}
+
+                                        <div className="mb-4">
+                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Color:</b> <span>{}</span></label>
+                                            <div className='flex'>
+                                                {colors?.map((color) => (
+                                                <div key={color.id}>
+                                                    <button className='btn p-3 mr-2' style={{ background: color.color_code }}></button>
+                                                </div>))
+                                                }
+                                            </div>
+                                            <hr />
+                                        </div>
+
+                                    </div>
+                                    <button type="button" className="btn btn-primary rounded-lg mr-2">
+                                        <i className="fas fa-cart-plus mr-2" /> Add to cart
+                                    </button>
+                                    <button href="#!" type="button" className="btn btn-danger rounded-lg" data-mdb-toggle="tooltip" title="Add to wishlist">
+                                        <i className="fas fa-heart" />
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <hr />
+                <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li className="nav-item" role="presentation">
+                        <button className="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">
+                            Specifications
+                        </button>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                        <button className="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
+                            Vendor
+                        </button>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                        <button className="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" >
+                            Review
+                        </button>
+                    </li>
+                </ul>
+                <div className="tab-content" id="pills-tabContent">
+                    <div
+                        className="tab-pane fade show active"
+                        id="pills-home"
+                        role="tabpanel"
+                        aria-labelledby="pills-home-tab"
+                        tabIndex={0}
+                    >
+                        <div className="overflow-x-auto">
+                            <table className="table-auto w-full text-left">
+                                <tbody>
+                                    <tr>
+                                        <th className="py-2 pr-4 w-1/4">
+                                            {" "}
+                                            <strong>Category</strong>
+                                        </th>
+                                        <td>{product.category?.title}</td>
+                                    </tr>
+                                    {specifications.map((spec) => (
+                                        <tr key={spec.id}>
+                                            <th className="py-2 pr-4 w-1/4">
+                                                {" "}
+                                                <strong>{spec.title}</strong>
+                                            </th>
+                                            <td>{spec.content}</td>
+                                        </tr>
+                                    ))
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div
+                        className="tab-pane fade"
+                        id="pills-profile"
+                        role="tabpanel"
+                        aria-labelledby="pills-profile-tab"
+                        tabIndex={0}
+                    >
+                        <div className="card mb-3 max-w-md">
+                            <div className="flex">
+                                <div className="w-1/3">
+                                    <img
+                                        src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                                        style={{
+                                            height: "100%",
+                                            width: "100%",
+                                            objectFit: "cover"
+                                        }}
+                                        alt="User Image"
+                                        className="img-fluid"
+                                    />
+                                </div>
+                                <div className="w-2/3">
+                                    <div className="p-4">
+                                        <h5 className="font-bold">{product.vendor?.name?  product.vendor?.name : product.vendor?.user?.full_name || "Unknown"}</h5>
+                                        <p className="">Vendor</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className="tab-pane fade"
+                        id="pills-contact"
+                        role="tabpanel"
+                        aria-labelledby="pills-contact-tab"
+                        tabIndex={0}
+                    >
+                        <div className="container mt-5">
+                            <div className="row">
+                                {/* Column 1: Form to create a new review */}
+                                <div className="col-md-6">
+                                    <h2 className="text-2xl font-bold mb-4">Create a New Review</h2>
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                                Rating
+                                            </label>
+                                            <select name="ratingSelect" className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md" id="">
+                                                <option value="1">1 Star</option>
+                                                <option value="1">2 Star</option>
+                                                <option value="1">3 Star</option>
+                                                <option value="1">4 Star</option>
+                                                <option value="1">5 Star</option>
+                                            </select>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="reviewText" className="block text-sm font-medium text-gray-700">
+                                                Review
+                                            </label>
+                                            <textarea
+                                                className="mt-1 block w-full h-44 shadow-sm sm:text-sm border border-gray-300 rounded-md"
+                                                id="reviewText"
+                                                rows={4}
+                                                placeholder="Write your review"
+                                                defaultValue={""}
+                                            />
+                                        </div>
+                                        <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            Submit Review
+                                        </button>
+                                    </form>
+                                </div>
+                                {/* Column 2: Display existing reviews */}
+                                <div className="col-md-6">
+                                    <h2 className="text-2xl font-bold mb-4">Existing Reviews</h2>
+                                    <div className="card mb-3">
+                                        <div className="row g-0">
+                                            <div className="col-md-3">
+                                                <img
+                                                    src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                                                    alt="User Image"
+                                                    className="img-fluid rounded-full"
+                                                />
+                                            </div>
+                                            <div className="col-md-9">
+                                                <div className="card-body">
+                                                    <h5 className="text-lg font-bold">User 1</h5>
+                                                    <p className="text-sm text-gray-500">August 10, 2023</p>
+                                                    <p className="text-base">
+                                                        {`This is a great product! I'm really satisfied with it.`}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="card mb-3">
+                                        <div className="row g-0">
+                                            <div className="col-md-3">
+                                                <img
+                                                    src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                                                    alt="User Image"
+                                                    className="img-fluid rounded-full"
+                                                />
+                                            </div>
+                                            <div className="col-md-9">
+                                                <div className="card-body">
+                                                    <h5 className="text-lg font-bold">User 2</h5>
+                                                    <p className="text-sm text-gray-500">August 15, 2023</p>
+                                                    <p className="text-base">
+                                                        The quality of this product exceeded my expectations!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* More reviews can be added here */}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabIndex={0}>
+                        <div className="container mt-5">
+                            <div className="row">
+                                {/* Column 1: Form to submit new questions */}
+                                <div className="col-md-6">
+                                    <h2 className="text-2xl font-bold mb-4">Ask a Question</h2>
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="askerName" className="block text-sm font-medium text-gray-700">
+                                                Your Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                                id="askerName"
+                                                placeholder="Enter your name"
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="questionText" className="block text-sm font-medium text-gray-700">
+                                                Question
+                                            </label>
+                                            <textarea
+                                                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                                id="questionText"
+                                                rows={4}
+                                                placeholder="Ask your question"
+                                                defaultValue={""}
+                                            />
+                                        </div>
+                                        <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Submit Question
+                                        </button>
+                                    </form>
+                                </div>
+                                {/* Column 2: Display existing questions and answers */}
+                                <div className="col-md-6">
+                                    <h2 className="text-2xl font-bold mb-4">Questions and Answers</h2>
+                                    <div className="card mb-3">
+                                        <div className="card-body">
+                                            <h5 className="text-lg font-bold">User 1</h5>
+                                            <p className="text-sm text-gray-500">August 10, 2023</p>
+                                            <p className="text-base">
+                                                What are the available payment methods?
+                                            </p>
+                                            <h6 className="text-sm font-medium text-gray-700">Answer:</h6>
+                                            <p className="text-base">
+                                                We accept credit/debit cards and PayPal as payment methods.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="card mb-3">
+                                        <div className="card-body">
+                                            <h5 className="text-lg font-bold">User 2</h5>
+                                            <p className="text-sm text-gray-500">August 15, 2023</p>
+                                            <p className="text-base">How long does shipping take?</p>
+                                            <h6 className="text-sm font-medium text-gray-700">Answer:</h6>
+                                            <p className="text-base">
+                                                Shipping usually takes 3-5 business days within the US.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {/* More questions and answers can be added here */}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+  )
+}
+
+export default ProductDetail
