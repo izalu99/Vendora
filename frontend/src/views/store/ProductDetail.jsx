@@ -168,11 +168,11 @@ const ProductDetail = () => {
                                     <div className="flex flex-col">
                                         {/* Quantity */}
                                         <div className="mb-4">
-                                            <label id="qty" name="qty" className="block font-bold mb-2" htmlFor="typeNumber"><b>Quantity</b></label>
+                                            <h6 className="block font-bold mb-2"><b>Quantity</b></h6>
                                             <input
                                                 type="number"
                                                 id="qty"
-                                                name = "qty"
+                                                name="qty"
                                                 className="w-1/2 border border-gray-300 p-2 rounded-lg"
                                                 min={1}
                                                 max={product.stock_qty}
@@ -183,12 +183,12 @@ const ProductDetail = () => {
 
                                         {/* Size */}
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Size: </b><span>{sizeValue}</span></label>
-                                            <div className='flex'>
+                                            <h6 className="block font-bold mb-2"><b>Size: </b><span>{sizeValue}</span></h6>
+                                            <div className='flex' name="size" id="size">
                                                 {sizes?.map((size) => (
                                                     <div key={size.id} className='block mr-2'>
                                                         <button 
-                                                        className='btn btn-secondary'
+                                                        className='btn btn-primary p-2 mr-2 mb-1 rounded-lg'
                                                         onClick={(event) => handleChooseSize(event, size.name)}
                                                         >{size.name}</button>
                                                     </div>
@@ -200,19 +200,22 @@ const ProductDetail = () => {
                                         {/* Colors */}
 
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Color:</b> <span>{colorValue}</span></label>
-                                            <div className='flex flex-col'>
+                                            <h6 className="block font-bold mb-2"><b>Color:</b> <span>{colorValue}</span></h6>
+                                            <div className='flex flex-col' name="colors" id="colors">
                                                 {colors?.map((color) => (
-                                                <div key={color.id} className='flex flex-row'>
+                                                <div key={color.id} className='flex flex-row items-center'>
                                                     <button 
                                                     className='btn p-3 mr-2 mb-1 color_button' 
                                                     style={{ background: color.color_code }}
+                                                    name = 'colorButton'
+                                                    id='colorButton'
                                                     onClick={(event) => handleChooseColor(event, color.name)}
                                                     ></button>
                                                     <label 
-                                                    className='color_name bg-transparent text-left'  
+                                                    className='color_name bg-transparent text-left align-middle'  
                                                     name='colorLabel' 
                                                     id='colorLabel' 
+                                                    htmlFor='colorButton'
                                                     onClick={(event) => handleChooseColor(event, color.name)}>{color.name}</label>  
                                                 </div>))
                                                 }
@@ -327,10 +330,10 @@ const ProductDetail = () => {
                                     <h2 className="text-2xl font-bold mb-4">Create a New Review</h2>
                                     <form>
                                         <div className="mb-3">
-                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                            <label htmlFor="ratingSelect" className="block text-sm font-medium text-gray-700">
                                                 Rating
                                             </label>
-                                            <select name="ratingSelect" className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md" id="">
+                                            <select name="ratingSelect" id="ratingSelect" className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md">
                                                 <option value="1">1 Star</option>
                                                 <option value="1">2 Star</option>
                                                 <option value="1">3 Star</option>
