@@ -9,6 +9,10 @@ const ProductDetail = () => {
     const [sizes, setSizes] = useState([])
     const [gallery, setGallery] = useState([])
     const [colors, setColors] = useState([])
+    const [sizeValue, setSizeValue] = useState('No Size Selected')
+    const [colorValue, setColorValue] = useState('No Color Selected')
+    const [qtyValue, setQtyValue] = useState(0)
+
     const param  = useParams().slug
     console.log('param: ', param)
 
@@ -37,6 +41,27 @@ const ProductDetail = () => {
     console.log('product.specification: ', specifications)
     console.log('product.gallery: ', gallery)
     console.log('product.color: ', colors)
+    //console.log('product.stock_qty: ', product.stock_qty)
+
+
+    const handleChooseColor = (event, colorName) => {
+        event.preventDefault()
+        setColorValue(colorName)
+    }
+
+    const handleChooseSize = (event, sizeName) => {
+        event.preventDefault()
+        setSizeValue(sizeName)
+    }
+    const handleQtyInput = (event, value) => {
+        event.preventDefault()
+        if (value <= product.stock_qty){
+            setQtyValue(value)
+        }else{
+            setQtyValue(product.stock_qty)
+            alert(`Only ${product.stock_qty} items available in stock`)
+        }
+    }
 
   return (
     <div>
@@ -139,27 +164,33 @@ const ProductDetail = () => {
                                     </table>
                                 </div>
                                 <hr className="my-5" />
-                                <form action="">
+                                <div action="">
                                     <div className="flex flex-col">
                                         {/* Quantity */}
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Quantity</b></label>
+                                            <label id="qty" name="qty" className="block font-bold mb-2" htmlFor="typeNumber"><b>Quantity</b></label>
                                             <input
                                                 type="number"
-                                                id="typeNumber"
+                                                id="qty"
+                                                name = "qty"
                                                 className="w-1/2 border border-gray-300 p-2 rounded-lg"
                                                 min={1}
-                                                value={1}
+                                                max={product.stock_qty}
+                                                value={qtyValue}
+                                                onChange={(event) => handleQtyInput(event, event.target.value)}
                                             />
                                         </div>
 
                                         {/* Size */}
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Size:</b><span>{}</span></label>
+                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Size: </b><span>{sizeValue}</span></label>
                                             <div className='flex'>
-                                                {sizes.map((size) => (
+                                                {sizes?.map((size) => (
                                                     <div key={size.id} className='block mr-2'>
-                                                        <button className='btn btn-secondary'>{size.name}</button>
+                                                        <button 
+                                                        className='btn btn-secondary'
+                                                        onClick={(event) => handleChooseSize(event, size.name)}
+                                                        >{size.name}</button>
                                                     </div>
                                                 ))
                                                 }
@@ -169,11 +200,20 @@ const ProductDetail = () => {
                                         {/* Colors */}
 
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Color:</b> <span>{}</span></label>
-                                            <div className='flex'>
+                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Color:</b> <span>{colorValue}</span></label>
+                                            <div className='flex flex-col'>
                                                 {colors?.map((color) => (
-                                                <div key={color.id}>
-                                                    <button className='btn p-3 mr-2' style={{ background: color.color_code }}></button>
+                                                <div key={color.id} className='flex flex-row'>
+                                                    <button 
+                                                    className='btn p-3 mr-2 mb-1 color_button' 
+                                                    style={{ background: color.color_code }}
+                                                    onClick={(event) => handleChooseColor(event, color.name)}
+                                                    ></button>
+                                                    <label 
+                                                    className='color_name bg-transparent text-left'  
+                                                    name='colorLabel' 
+                                                    id='colorLabel' 
+                                                    onClick={(event) => handleChooseColor(event, color.name)}>{color.name}</label>  
                                                 </div>))
                                                 }
                                             </div>
@@ -187,7 +227,7 @@ const ProductDetail = () => {
                                     <button href="#!" type="button" className="btn btn-danger rounded-lg" data-mdb-toggle="tooltip" title="Add to wishlist">
                                         <i className="fas fa-heart" />
                                     </button>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
