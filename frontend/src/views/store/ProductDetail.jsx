@@ -6,6 +6,17 @@ import GetCurrentAddress from '../plugin/GetCurrentAddress'
 import GetUserData from '../plugin/GetUserData'
 import GetCartId from '../plugin/GetCartId'
 
+import Swal from 'sweetalert2'
+
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 1200,
+    timerProgressBar: false,
+})
+
 const ProductDetail = () => {
     const [product, setProduct] = useState([])
     const [specifications, setSpecifications] = useState([])
@@ -99,6 +110,11 @@ const ProductDetail = () => {
 
             const response = await apiInstance.post('cart-view/', formdata)
             console.log('response: ', response.data)
+
+            Toast.fire({
+                icon: 'success',
+                title: response.data.message
+            })
         } catch (error){
             console.log('Error: ', error)
         }
