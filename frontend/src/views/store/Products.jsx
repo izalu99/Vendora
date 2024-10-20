@@ -48,9 +48,8 @@ const Products = () => {
         }));
     }
 
-    const handleAddToCart = async (event, productId) => {
+    const handleAddToCart = async (event, productId, product) => {
         event.preventDefault();
-        const product = products.find((product) => product.pid === productId);
         const product_id = product?.id;
         const user_id = userData?.user_id;
         const price = product?.price;
@@ -202,7 +201,7 @@ const Products = () => {
                                                         <div className="px-4 py-2 flex">
                                                             <button 
                                                             className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2"
-                                                            onClick={(e) => handleAddToCart(e, product.pid)}
+                                                            onClick={(e) => handleAddToCart(e, product.pid, product)}
                                                             >
                                                                 <i className="fas fa-shopping-cart"></i>
                                                             </button>
