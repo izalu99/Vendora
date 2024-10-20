@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import apiInstance from "../../utils/axios";
+import GetCurrentAddress from '../plugin/GetCurrentAddress'
+import GetUserData from '../plugin/GetUserData'
+import GetCartId from '../plugin/GetCartId'
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -8,6 +12,11 @@ const Products = () => {
     const [OpenVariationMenus, setOpenVariationMenus] = useState({});
     const [chosenColors, setChosenColors] = useState({});
     const [chosenSizes, setChosenSizes] = useState({});
+    const [chosenQty, setChosenQty] = useState({});
+
+    const currentAddress = GetCurrentAddress();
+    const userData = GetUserData();
+    const cart_id = GetCartId();
 
 
     const toggleVariationMenu = (productId) => {
@@ -29,6 +38,43 @@ const Products = () => {
             ...prevChosenSizes,
             [productId]: size,
         }));
+    }
+
+    const handleQtyChange = (event, productId, qty) => {
+        event.preventDefault();
+        setChosenQty((prevChosenQty) => ({
+            ...prevChosenQty,
+            [productId]: qty,
+        }));
+    }
+
+    const handleAddToCart = async (event, productId) => {
+        event.preventDefault();
+        const product = products.find((product) => product.pid === productId);
+        const product_id = product?.id;
+        const user_id = userData?.user_id;
+        const price = product?.price;
+        const shipping_amount = product?.shipping_amount;
+        const country = currentAddress?.country;
+
+        try{
+            const formData = new FormData();
+            formData.append("Product ID: ", productId);
+            formData.append("product_id",product_id)
+            formData.append("user_id",user_id)
+            formData.append("qty",chosenQty[productId])
+            formData.append("price",price)
+            formData.append("shipping_amount",shipping_amount)
+            formData.append("country",country)
+            formData.append("size",chosenSizes[productId])
+            formData.append("color",chosenColors[productId])
+            formData.append("cart_id",cart_id)
+
+            const response = await apiInstance.post('cart-view/', formData);
+            console.log('response: ', response.data);
+        }catch(error){
+            console.log("Error: ", error)
+        }
     }
 
     useEffect(() => {
@@ -105,36 +151,59 @@ const Products = () => {
                                                 {OpenVariationMenus[product.pid] && (
                                                 <div className="origin-top-right absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="dropdownMenuButton">
-                                                        <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Size</b>: {chosenSizes[product.pid] || ""}
-                                                        </div>
-                                                        <div className="px-4 py-2 flex flex-wrap">
-                                                            {product.size?.map((size) => (
-                                                                <button 
-                                                                onClick={()=> chooseSize(product.pid, size.name)} 
-                                                                key={`${size.id}-${size.name}`} 
-                                                                className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2"
-                                                                >{size.name}</button>
-                                                            ))
+                                                        {product.size?.length > 0 && (
+                                                            <>
+                                                                <h6 className="px-4 py-2 text-sm text-gray-700">
+                                                                    <b>Size</b>: {chosenSizes[product.pid] || ""}
+                                                                </h6>
+                                                                <div className="px-4 py-2 flex flex-wrap">
+                                                                    {product.size?.map((size) => (
+                                                                        <button 
+                                                                        onClick={()=> chooseSize(product.pid, size.name)} 
+                                                                        key={`${size.id}-${size.name}`} 
+                                                                        className="bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded mr-2 mb-2"
+                                                                        >{size.name}</button>
+                                                                    ))}
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                        {product.color?.length > 0 && (
+                                                            <>
+                                                                <h6 className="px-4 py-2 text-sm text-gray-700">
+                                                                    <b>Color</b>: {chosenColors[product.pid] || ""}
+                                                                </h6>
+                                                                <div className="px-4 py-2 flex flex-wrap">
+                                                                    {product.color?.map((color) => (
+                                                                        <button 
+                                                                        onClick={() => chooseColor(product.pid, color.name)} 
+                                                                        key={`${color.id}-${color.name}`} 
+                                                                        style={{backgroundColor: `${color.color_code}`}} 
+                                                                        className="w-6 h-6 rounded-full mr-2 mb-2"
+                                                                        ></button>
+                                                                        
+                                                                    ))}
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                        {product.stock_qty > 0 && (
+                                                            <div className="flex flex-row">
+                                                                <h6 className='pl-5 pr-1 py-2 text-gray-700 text-center align-middle'><b>Qty:</b></h6>
+                                                                <input 
+                                                                type="number" 
+                                                                className="ml-1 px-2 py-2 text-sm text-gray-700 border border-gray-300 rounded w-1/2" 
+                                                                placeholder="Quantity"
+                                                                min={1}
+                                                                max={product.stock_qty}
+                                                                onChange={(e)=> handleQtyChange(e, product.pid, e.target.value)}
+                                                                />
+                                                            </div>
 
-                                                            }
-                                                        </div>
-                                                        <div className="px-4 py-2 text-sm text-gray-700">
-                                                            <b>Color</b>: {chosenColors[product.pid] || ""}
-                                                        </div>
-                                                        <div className="px-4 py-2 flex flex-wrap">
-                                                            {product.color?.map((color) => (
-                                                                <button 
-                                                                onClick={() => chooseColor(product.pid, color.name)} 
-                                                                key={`${color.id}-${color.name}`} 
-                                                                style={{backgroundColor: `${color.color_code}`}} 
-                                                                className="w-6 h-6 rounded-full mr-2 mb-2"
-                                                                ></button>
-                                                                
-                                                            ))}
-                                                        </div>
+                                                        )}
                                                         <div className="px-4 py-2 flex">
-                                                            <button className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">
+                                                            <button 
+                                                            className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2"
+                                                            onClick={(e) => handleAddToCart(e, product.pid)}
+                                                            >
                                                                 <i className="fas fa-shopping-cart"></i>
                                                             </button>
                                                             <button className="bg-red-500 text-white text-xs font-semibold py-1 px-2 rounded mr-2 mb-2">
