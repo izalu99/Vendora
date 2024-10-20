@@ -36,31 +36,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = [
-            'title',
-            'pid',
-            'image',
-            'description',
-            'category',
-            'old_price',
-            'price',
-            'shipping_amount',
-            'stock_qty',
-            'in_stock',
-            'status',
-            'featured',
-            'views',
-            'rating',
-            'vendor',
-            'gallery',
-            'specification',
-            'size',
-            'color',
-            'slug',
-            'date',
-            'product_rating',
-            'rating_count',
-        ]
+        fields = '__all__'
     
     def __init__(self, *args, **kwargs):
         super(ProductSerializer, self).__init__(*args, **kwargs)

@@ -3,6 +3,17 @@ import axios from './axios';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 
+import Swal from 'sweetalert2'
+
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 1200,
+    timerProgressBar: false,
+})
+
 
 export const login = async (email, password) => {
     try{
@@ -14,6 +25,10 @@ export const login = async (email, password) => {
             // Save the token in the local storage
             setAuthUser(data.access, data.refresh);
             // alert - sign in success
+            Toast.fire({
+                icon: 'success',
+                title: 'Logged in successfully'
+            })
         }
         return {data, error: null}
     } catch (error) {
@@ -36,6 +51,10 @@ export const register = async (full_name, email, phone, password, password2) => 
 
         await login(email, password);
         // alert - sign up success
+        Toast.fire({
+            icon: 'success',
+            title: 'Registered successfully'
+        })
         return {data, error: null}
     } catch (error) {
         return {
@@ -52,6 +71,10 @@ export const logout = () => {
     useAuthStore.getState().setUser(null);
 
     // alert - logged out successfully
+    Toast.fire({
+        icon: 'success',
+        title: 'Logged out successfully'
+    })
 }
 
 

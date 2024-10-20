@@ -2,15 +2,39 @@ import {useState, useEffect} from 'react'
 import { useParams } from 'react-router-dom'
 
 import apiInstance from '../../utils/axios'
+import GetCurrentAddress from '../plugin/GetCurrentAddress'
+import GetUserData from '../plugin/GetUserData'
+import GetCartId from '../plugin/GetCartId'
+
+import Swal from 'sweetalert2'
+
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 1200,
+    timerProgressBar: false,
+})
 
 const ProductDetail = () => {
-    const [product, setProduct] = useState({})
+    const [product, setProduct] = useState([])
     const [specifications, setSpecifications] = useState([])
     const [sizes, setSizes] = useState([])
     const [gallery, setGallery] = useState([])
     const [colors, setColors] = useState([])
+    const [sizeValue, setSizeValue] = useState('No Size Selected')
+    const [colorValue, setColorValue] = useState('No Color Selected')
+    const [qtyValue, setQtyValue] = useState(1)
+
     const param  = useParams().slug
-    console.log('param: ', param)
+    //console.log('param: ', param)
+
+    const currentAddress = GetCurrentAddress();
+    const userData = GetUserData();
+    const cart_id = GetCartId();
+    
+    
 
     useEffect(() => {
         apiInstance.get(`products/${param}`)
@@ -18,25 +42,83 @@ const ProductDetail = () => {
             let response;
             try{
                 response = res.data
-                console.log(response)
+                //console.log(response)
                 setProduct(response)
             } catch (error){
                 console.log("Error: ", error)
             }
 
             if(product){
+                
                 setSpecifications(response.specification)
                 setSizes(response.size)
                 setGallery(response.gallery)
                 setColors(response.color)
+                //console.log('product: ', product)
+                //console.log('specification: ', specifications)
+                //console.log('gallery: ', gallery)
             }
         })
     },[param])
-    console.log('product: ', product)
-    console.log('product.size: ', sizes)
-    console.log('product.specification: ', specifications)
-    console.log('product.gallery: ', gallery)
-    console.log('product.color: ', colors)
+
+    
+    const handleChooseColor = (event, colorName) => {
+        event.preventDefault()
+        setColorValue(colorName)
+    }
+
+    const handleChooseSize = (event, sizeName) => {
+        event.preventDefault()
+        setSizeValue(sizeName)
+    }
+
+    const handleQtyInput = (event, value) => {
+        event.preventDefault()
+        if (value <= product.stock_qty){
+            setQtyValue(value)
+        }else{
+            setQtyValue(product.stock_qty)
+            alert(`Only ${product.stock_qty} items available in stock`)
+        }
+    }
+
+    const handleAddToCart = async (event) =>{
+        event.preventDefault()
+        ////console.log('product id: ', product.pid)
+        //console.log('title: ', product.title)
+        //console.log('size: ', sizeValue)
+        
+        //console.log('color: ', colorValue)
+        //console.log('country: ', currentAddress.country)
+        //console.log('qty: ', qtyValue)
+        //console.log('price: ', product.price)
+        //console.log('shipping amount: ', product.shipping_amount)
+        //console.log('user data: ', userData?.user_id)
+        //console.log('cart id: ', cart_id)
+
+        try{
+            const formdata = new FormData()
+            formdata.append('product_id', product?.id)
+            formdata.append('user_id', userData?.user_id)
+            formdata.append('qty', qtyValue)
+            formdata.append('price', product.price)
+            formdata.append('shipping_amount', product.shipping_amount)
+            formdata.append('country', currentAddress.country)
+            formdata.append('size', sizeValue)
+            formdata.append('color', colorValue)
+            formdata.append('cart_id', cart_id)
+
+            const response = await apiInstance.post('cart-view/', formdata)
+            console.log('response: ', response.data)
+
+            Toast.fire({
+                icon: 'success',
+                title: response.data.message
+            })
+        } catch (error){
+            console.log('Error: ', error)
+        }
+    }
 
   return (
     <div>
@@ -139,27 +221,33 @@ const ProductDetail = () => {
                                     </table>
                                 </div>
                                 <hr className="my-5" />
-                                <form action="">
+                                <div action="">
                                     <div className="flex flex-col">
                                         {/* Quantity */}
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Quantity</b></label>
+                                            <h6 className="block font-bold mb-2"><b>Quantity</b></h6>
                                             <input
                                                 type="number"
-                                                id="typeNumber"
+                                                id="qty"
+                                                name="qty"
                                                 className="w-1/2 border border-gray-300 p-2 rounded-lg"
                                                 min={1}
-                                                value={1}
+                                                max={product.stock_qty}
+                                                value={qtyValue}
+                                                onChange={(event) => handleQtyInput(event, event.target.value)}
                                             />
                                         </div>
 
                                         {/* Size */}
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Size:</b><span>{}</span></label>
-                                            <div className='flex'>
-                                                {sizes.map((size) => (
+                                            <h6 className="block font-bold mb-2"><b>Size: </b><span>{sizeValue}</span></h6>
+                                            <div className='flex' name="size" id="size">
+                                                {sizes?.map((size) => (
                                                     <div key={size.id} className='block mr-2'>
-                                                        <button className='btn btn-secondary'>{size.name}</button>
+                                                        <button 
+                                                        className='btn btn-primary p-2 mr-2 mb-1 rounded-lg'
+                                                        onClick={(event) => handleChooseSize(event, size.name)}
+                                                        >{size.name}</button>
                                                     </div>
                                                 ))
                                                 }
@@ -169,11 +257,23 @@ const ProductDetail = () => {
                                         {/* Colors */}
 
                                         <div className="mb-4">
-                                            <label className="block font-bold mb-2" htmlFor="typeNumber"><b>Color:</b> <span>{}</span></label>
-                                            <div className='flex'>
+                                            <h6 className="block font-bold mb-2"><b>Color:</b> <span>{colorValue}</span></h6>
+                                            <div className='flex flex-col' name="colors" id="colors">
                                                 {colors?.map((color) => (
-                                                <div key={color.id}>
-                                                    <button className='btn p-3 mr-2' style={{ background: color.color_code }}></button>
+                                                <div key={color.id} className='flex flex-row items-center'>
+                                                    <button 
+                                                    className='btn p-3 mr-2 mb-1 color_button' 
+                                                    style={{ background: color.color_code }}
+                                                    name = 'colorButton'
+                                                    id='colorButton'
+                                                    onClick={(event) => handleChooseColor(event, color.name)}
+                                                    ></button>
+                                                    <label 
+                                                    className='color_name bg-transparent text-left align-middle'  
+                                                    name='colorLabel' 
+                                                    id='colorLabel' 
+                                                    htmlFor='colorButton'
+                                                    onClick={(event) => handleChooseColor(event, color.name)}>{color.name}</label>  
                                                 </div>))
                                                 }
                                             </div>
@@ -181,13 +281,16 @@ const ProductDetail = () => {
                                         </div>
 
                                     </div>
-                                    <button type="button" className="btn btn-primary rounded-lg mr-2">
+                                    <button 
+                                    type="button" 
+                                    className="btn btn-primary rounded-lg mr-2"
+                                    onClick={(event) => handleAddToCart(event)}>
                                         <i className="fas fa-cart-plus mr-2" /> Add to cart
                                     </button>
                                     <button href="#!" type="button" className="btn btn-danger rounded-lg" data-mdb-toggle="tooltip" title="Add to wishlist">
                                         <i className="fas fa-heart" />
                                     </button>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -287,10 +390,10 @@ const ProductDetail = () => {
                                     <h2 className="text-2xl font-bold mb-4">Create a New Review</h2>
                                     <form>
                                         <div className="mb-3">
-                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                            <label htmlFor="ratingSelect" className="block text-sm font-medium text-gray-700">
                                                 Rating
                                             </label>
-                                            <select name="ratingSelect" className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md" id="">
+                                            <select name="ratingSelect" id="ratingSelect" className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md">
                                                 <option value="1">1 Star</option>
                                                 <option value="1">2 Star</option>
                                                 <option value="1">3 Star</option>

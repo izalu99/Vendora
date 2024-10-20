@@ -4,6 +4,7 @@ import { login } from '../../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
 
+
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,7 +33,6 @@ const Login = () => {
         } else{
             navigate('/');
             resetForm();
-            
         }
         setIsLoading(false);
     }

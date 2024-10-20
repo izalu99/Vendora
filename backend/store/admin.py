@@ -2,7 +2,7 @@ from django.contrib import admin
 #from vendor.models import Vendor
 #from userauths.models import User
 from store.models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
-from store.models import ProductFaq, Review, Wishlist, Notification, Coupon
+from store.models import ProductFaq, Review, Wishlist, Notification, Coupon, Tax
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class ColorInline(admin.TabularInline):
     extra = 0
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
+    list_display = ['id','pid','title', 'category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
     list_editable = ['price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
     list_filter = ['category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
     search_fields = ['title', 'category', 'price', 'old_price', 'stock_qty', 'in_stock', 'vendor', 'featured']
@@ -80,3 +80,4 @@ admin.site.register(Review, ReviewAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(Tax)
