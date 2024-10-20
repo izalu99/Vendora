@@ -1,7 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../../store/auth';
 
 const StoreHeader = () => {
+
+    const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+    const user = useAuthStore(state => state.user)
+
+
+    useEffect(() => {
+        console.log('isLoggedIn: ', isLoggedIn())
+        console.log('user: ', user())
+    }, [])
+
     const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
     const [isVendorDropdownOpen, setIsVendorDropdownOpen] = useState(false);
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
@@ -93,8 +104,17 @@ const StoreHeader = () => {
                             <input id="search" name="search" className="px-4 py-2 rounded" type="text" placeholder="Search" aria-label="Search" />
                             <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" type="submit">Search</button>
                         </div>
-                        <Link className=" text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/login">Login</Link>
-                        <Link className="text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/register">Register</Link>
+                        {isLoggedIn() ? (
+                            <>
+                                <Link className="text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/dashboard">Dashboard</Link>
+                                <Link className="text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/logout">Logout</Link>
+                            </>
+                        ) : (
+                            <>
+                            <Link className="text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/login">Login</Link>
+                            <Link className="text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" to="/register">Register</Link>
+                            </>
+                        )}
                         <Link className="text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" to="/cart/"><i className='fas fa-shopping-cart'></i> <span id='cart-total-items'>{cartCount || 0}</span></Link>
                     </div>
                 </div>
