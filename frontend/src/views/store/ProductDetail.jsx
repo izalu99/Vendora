@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import { useParams } from 'react-router-dom'
 
 import apiInstance from '../../utils/axios'
+import GetCurrentAddress from '../plugin/GetCurrentAddress'
 
 const ProductDetail = () => {
     const [product, setProduct] = useState({})
@@ -11,10 +12,13 @@ const ProductDetail = () => {
     const [colors, setColors] = useState([])
     const [sizeValue, setSizeValue] = useState('No Size Selected')
     const [colorValue, setColorValue] = useState('No Color Selected')
-    const [qtyValue, setQtyValue] = useState(0)
+    const [qtyValue, setQtyValue] = useState(1)
 
     const param  = useParams().slug
     console.log('param: ', param)
+
+    const currentAddress = GetCurrentAddress();
+    
 
     useEffect(() => {
         apiInstance.get(`products/${param}`)
@@ -29,6 +33,7 @@ const ProductDetail = () => {
             }
 
             if(product){
+                console.log('product: ', product)
                 setSpecifications(response.specification)
                 setSizes(response.size)
                 setGallery(response.gallery)
@@ -36,14 +41,8 @@ const ProductDetail = () => {
             }
         })
     },[param])
-    console.log('product: ', product)
-    console.log('product.size: ', sizes)
-    console.log('product.specification: ', specifications)
-    console.log('product.gallery: ', gallery)
-    console.log('product.color: ', colors)
-    //console.log('product.stock_qty: ', product.stock_qty)
 
-
+    
     const handleChooseColor = (event, colorName) => {
         event.preventDefault()
         setColorValue(colorName)
@@ -53,6 +52,7 @@ const ProductDetail = () => {
         event.preventDefault()
         setSizeValue(sizeName)
     }
+
     const handleQtyInput = (event, value) => {
         event.preventDefault()
         if (value <= product.stock_qty){
@@ -61,6 +61,21 @@ const ProductDetail = () => {
             setQtyValue(product.stock_qty)
             alert(`Only ${product.stock_qty} items available in stock`)
         }
+    }
+
+    const handleAddToCart = (event) =>{
+        event.preventDefault()
+        console.log('product id: ', product.pid)
+        console.log('title: ', product.title)
+        console.log('size: ', sizeValue)
+        console.log('specification: ', specifications)
+        console.log('gallery: ', gallery)
+        console.log('color: ', colorValue)
+        console.log('country: ', currentAddress.country)
+        console.log('qty: ', qtyValue)
+        console.log('price: ', product.price)
+        console.log('old price: ', product.old_price)
+        console.log('shipping_amount: ', product.shipping_amount)
     }
 
   return (
@@ -224,7 +239,10 @@ const ProductDetail = () => {
                                         </div>
 
                                     </div>
-                                    <button type="button" className="btn btn-primary rounded-lg mr-2">
+                                    <button 
+                                    type="button" 
+                                    className="btn btn-primary rounded-lg mr-2"
+                                    onClick={(event) => handleAddToCart(event)}>
                                         <i className="fas fa-cart-plus mr-2" /> Add to cart
                                     </button>
                                     <button href="#!" type="button" className="btn btn-danger rounded-lg" data-mdb-toggle="tooltip" title="Add to wishlist">
