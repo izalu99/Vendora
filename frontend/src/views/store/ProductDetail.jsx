@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import apiInstance from '../../utils/axios'
 import GetCurrentAddress from '../plugin/GetCurrentAddress'
+import GetUserData from '../plugin/GetUserData'
 
 const ProductDetail = () => {
     const [product, setProduct] = useState({})
@@ -15,9 +16,10 @@ const ProductDetail = () => {
     const [qtyValue, setQtyValue] = useState(1)
 
     const param  = useParams().slug
-    console.log('param: ', param)
+    //console.log('param: ', param)
 
     const currentAddress = GetCurrentAddress();
+    const userData = GetUserData();
     
 
     useEffect(() => {
@@ -26,18 +28,21 @@ const ProductDetail = () => {
             let response;
             try{
                 response = res.data
-                console.log(response)
+                //console.log(response)
                 setProduct(response)
             } catch (error){
                 console.log("Error: ", error)
             }
 
             if(product){
-                console.log('product: ', product)
+                
                 setSpecifications(response.specification)
                 setSizes(response.size)
                 setGallery(response.gallery)
                 setColors(response.color)
+                //console.log('product: ', product)
+                //console.log('specification: ', specifications)
+                //console.log('gallery: ', gallery)
             }
         })
     },[param])
@@ -68,14 +73,13 @@ const ProductDetail = () => {
         console.log('product id: ', product.pid)
         console.log('title: ', product.title)
         console.log('size: ', sizeValue)
-        console.log('specification: ', specifications)
-        console.log('gallery: ', gallery)
+        
         console.log('color: ', colorValue)
         console.log('country: ', currentAddress.country)
         console.log('qty: ', qtyValue)
         console.log('price: ', product.price)
-        console.log('old price: ', product.old_price)
         console.log('shipping_amount: ', product.shipping_amount)
+        console.log('user data: ', userData?.user_id)
     }
 
   return (
