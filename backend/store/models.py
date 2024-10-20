@@ -52,9 +52,14 @@ class Product(models.Model):
     views = models.PositiveIntegerField(default=0)
     rating = models.PositiveIntegerField(default=0, blank=True, null=True) # rating out of 5
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, related_name='vendor', null=True, blank=True)
+    
     pid = ShortUUIDField(unique=True, length=10, alphabet='abcdefghi0123456789') # product id
     slug = models.SlugField(unique=True)
     date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name_plural = 'Products'
 
     def save(self, *args, **kwargs):
         if self.slug == '' or self.slug == None:

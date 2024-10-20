@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom'
 import apiInstance from '../../utils/axios'
 import GetCurrentAddress from '../plugin/GetCurrentAddress'
 import GetUserData from '../plugin/GetUserData'
+import GetCartId from '../plugin/GetCartId'
 
 const ProductDetail = () => {
-    const [product, setProduct] = useState({})
+    const [product, setProduct] = useState([])
     const [specifications, setSpecifications] = useState([])
     const [sizes, setSizes] = useState([])
     const [gallery, setGallery] = useState([])
@@ -20,6 +21,8 @@ const ProductDetail = () => {
 
     const currentAddress = GetCurrentAddress();
     const userData = GetUserData();
+    const cart_id = GetCartId();
+    
     
 
     useEffect(() => {
@@ -68,18 +71,37 @@ const ProductDetail = () => {
         }
     }
 
-    const handleAddToCart = (event) =>{
+    const handleAddToCart = async (event) =>{
         event.preventDefault()
-        console.log('product id: ', product.pid)
-        console.log('title: ', product.title)
-        console.log('size: ', sizeValue)
+        ////console.log('product id: ', product.pid)
+        //console.log('title: ', product.title)
+        //console.log('size: ', sizeValue)
         
-        console.log('color: ', colorValue)
-        console.log('country: ', currentAddress.country)
-        console.log('qty: ', qtyValue)
-        console.log('price: ', product.price)
-        console.log('shipping_amount: ', product.shipping_amount)
-        console.log('user data: ', userData?.user_id)
+        //console.log('color: ', colorValue)
+        //console.log('country: ', currentAddress.country)
+        //console.log('qty: ', qtyValue)
+        //console.log('price: ', product.price)
+        //console.log('shipping amount: ', product.shipping_amount)
+        //console.log('user data: ', userData?.user_id)
+        //console.log('cart id: ', cart_id)
+
+        try{
+            const formdata = new FormData()
+            formdata.append('product_id', product?.id)
+            formdata.append('user_id', userData?.user_id)
+            formdata.append('qty', qtyValue)
+            formdata.append('price', product.price)
+            formdata.append('shipping_amount', product.shipping_amount)
+            formdata.append('country', currentAddress.country)
+            formdata.append('size', sizeValue)
+            formdata.append('color', colorValue)
+            formdata.append('cart_id', cart_id)
+
+            const response = await apiInstance.post('cart-view/', formdata)
+            console.log('response: ', response.data)
+        } catch (error){
+            console.log('Error: ', error)
+        }
     }
 
   return (

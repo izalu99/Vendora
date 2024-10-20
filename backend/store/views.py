@@ -39,8 +39,8 @@ class CartAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         payload = request.data
-        pid = payload['pid'] # product id
-        user_id = payload['email'] # get the user email for now
+        product_id = payload['product_id'] # product id not pid
+        user_id = payload['user_id']
         qty = payload['qty']
         price = payload['price']
         shipping_amount = payload['shipping_amount']
@@ -49,7 +49,7 @@ class CartAPIView(generics.ListCreateAPIView):
         color = payload['color']
         cart_id = payload['cart_id']
 
-        product = Product.objects.get(id=pid)
+        product = Product.objects.get(id=product_id)
         if user_id != "undefined":
             user = User.objects.get(id=user_id)
         else:
@@ -102,7 +102,7 @@ class CartAPIView(generics.ListCreateAPIView):
             cart.total = cart.sub_total + cart.shipping_amount + cart.tax_fee + cart.service_fee
             cart.save()
 
-            return Response({'message': 'Cart created successfully'}, status=status.HTTP_201_Created)
+            return Response({'message': 'Cart created successfully'}, status=status.HTTP_201_CREATED)
 
 
 
